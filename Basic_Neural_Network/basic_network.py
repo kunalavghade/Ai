@@ -16,6 +16,10 @@ class NeuralNetwork:
     def sigmoid(self, z):
         return  1 / (1 + np.exp(-z))
 
+    # derivative of sigmoid function
+    def sigmoidPrime(self, z):
+        return np.exp(-z) / ((1 + np.exp(-z)) ** 2)
+
     def forward(self, x) :
         self.z2 = np.dot(x, self.wheight_1) # multiply input with all weights of first layer
         self.a2 = self.sigmoid(self.z2) # apply sigmoid function to the result
@@ -24,6 +28,17 @@ class NeuralNetwork:
         return self.a3
     
 
+    def costFunctionPrime(self, x, y):
+        self.yHat = self.forward(x)
+        # delta for output layer (error * derivative of sigmoid)
+        delta3 = np.multiply(-(y-self.yHat), self.sigmoidPrime(self.z3))
+        # delta for hidden layer
+        djw2 = np.dot(self.a2.T, delta3)
+
+        delta2 = np.dot(delta3, self.wheight_2.T) * self.sigmoidPrime(self.z2)
+        djw1 = np.dot(x.T, delta2)
+        return djw1, djw2
+        
 
 model = NeuralNetwork()
 predicted_output = model.forward(np.array([1, 0]))
