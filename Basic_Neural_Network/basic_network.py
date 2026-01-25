@@ -38,7 +38,24 @@ class NeuralNetwork:
         delta2 = np.dot(delta3, self.wheight_2.T) * self.sigmoidPrime(self.z2)
         djw1 = np.dot(x.T, delta2)
         return djw1, djw2
-        
+
+    # helper functions
+    def getParams(self):
+        # get params of wheight_1 and wheight_2 as one vector
+        params = np.concatenate((self.wheight_1.ravel(), self.wheight_2.ravel()))
+        return params
+
+    def serParams(self, params):
+        # set params of wheight_1 and wheight_2 from one vector
+        wheight_1 = params[0:(self.input_layer_size * self.hidden_layer_size)].reshape(self.input_layer_size, self.hidden_layer_size)
+        wheight_2 = params[(self.input_layer_size * self.hidden_layer_size):].reshape(self.hidden_layer_size, self.output_layer_size)
+        self.wheight_1 = wheight_1
+        self.wheight_2 = wheight_2
+
+    def computeGradients(self, X, y):
+        dJdW1, dJdW2 = self.costFunctionPrime(X, y)
+        return np.concatenate((dJdW1.ravel(), dJdW2.ravel()))
+         
 
 model = NeuralNetwork()
 predicted_output = model.forward(np.array([1, 0]))
